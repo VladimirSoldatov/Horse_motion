@@ -21,17 +21,19 @@ void init_desk(int desk[][8])
 void display(int mas[][8], int count, int x, int y)//Рисование доски
 {
 	system("cls");
+	cout << " " << " 1 2 3 4 5 6 7 8\n";
 	for (int i = 0; i < 8; i++)
 	{
+		cout << i + 1<<" ";
 		for (int j = 0; j < 8; j++)
 		{
-			cout <<mas[i][j]<<"  ";
+			cout  << mas[i][j] << " ";
 		}
 		cout << "\n";
 	}
 	
 	cout << '\n' << count << '\n';
-	cout << '\n' << x<<"\t"<<y << '\n';
+	cout << '\n' << x +1<<"\t"<<y + 1 << '\n';
 }
 int random_number(int limit) 
 {
@@ -43,13 +45,13 @@ int random_number(int limit)
 int mask[8][2]
 {
 	{-2, -1},
-	{-2, 1},
+	{-2, 1 },
 	{-1, -2},
 	{-1, 2},
 	{1, -2},
 	{1, 2},
 	{2, -1},
-	{2, 1}
+	{2, 1 }
 };
 
 bool test_free_space(int _x, int _y, int desk[][8])
@@ -61,18 +63,25 @@ bool test_free_space(int _x, int _y, int desk[][8])
 			&& _x + mask[i][0] >= 0
 			&& _y + mask[i][1] <= 7 
 			&& _y + mask[i][1] >= 0
-			&& desk[_x + mask[i][0]][_y + mask[i][1]] == 0)
-		{
-			flag = true;
-			break;
-		}
+			&& desk[_x + mask[i][0]][_y + mask[i][1]] != 1)
+		
+			return true;
+
 
 
 	}
-	return flag;
+	return false;
+}
+void clear_temp(int temp[]) 
+{
+	for (int i = 0; i < 8; i++) 
+	{
+		temp[i] = 0;
+	}
 }
 int push_point(int& _x, int& _y, int desk[][8])
 {
+
 	int old_x = _x;
 	int old_y = _y;
 	int count = 0;
@@ -80,31 +89,34 @@ int push_point(int& _x, int& _y, int desk[][8])
 	while(test_free_space(_x,_y,desk))
 	{
 		i = random_number(8);
-		if (_x + mask[i][0] <= 7
+		static int iter = 0;
+		if (
+			_x + mask[i][0] <= 7
 			&& _x + mask[i][0] >= 0
 			&& _y + mask[i][1] <= 7
 			&& _y + mask[i][1] >= 0
-			&& desk[_x + mask[i][0]][_y + mask[i][1]] == 0)
+			&& desk[_x + mask[i][0]][_y + mask[i][1]] == 0
+			)
 		{
-			_x += mask[i][0];
-			_y += mask[i][1];
-			desk[_x][_y] = 1;
-			display(desk, count, _x, _y);
+	
+				_x += mask[i][0];
+				_y += mask[i][1];
+				desk[_x][_y] = 1;
+				count++;
+
+				display(desk, count, _x, _y);
 		
-			count++;
 		}
+
+
 
 		
 	}
 	cout << count << '\n';
 
-	system("pause");
+	//system("pause");
 	
-	if (count < 60) 
-	{
-		init_desk(desk);
-		push_point(old_x, old_y, desk);
-	}
+
 
 
 		return count;
@@ -113,9 +125,12 @@ int push_point(int& _x, int& _y, int desk[][8])
 }
 void draw(int _x, int _y, int desk[][8])
 {
-	while (1)
+	int count = 0;
+	while (count<40)
 	{
-		push_point(_x, _y, desk);
+		init_desk(desk);
+		desk[_x][_y] = 1;
+		count = push_point(_x, _y, desk);
 		
 		//display(desk);
 	}
